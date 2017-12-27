@@ -16,6 +16,8 @@ var jsSources = ["components/scripts/rclick.js",
 
 var sassSources = ["components/sass/*.scss"];
 var sassFinal = ["components/sass/style.scss"];
+var htmlSources = ["builds/development/*.html"];
+var jsonSources = ["builds/development/js/*.json"];
 
 gulp.task("coffee", function(){
   gulp.src(coffeeSources)
@@ -57,12 +59,25 @@ gulp.task("compass", function(done){
       //then you make dev dependent on clean finishing
 });
 
+gulp.task("html", function(){
+  gulp.src(htmlSources)
+      .pipe(connect.reload());
+});
+
+gulp.task("json", function(){
+  gulp.src(jsonSources)
+      .pipe(connect.reload());
+});
+
 gulp.task("dev", ["clean"]);
 
 gulp.task("watch", ["dev"], function(){
   gulp.watch(coffeeSources, ["coffee"]);
   gulp.watch(jsSources, ["js"]);
   gulp.watch(sassSources, ["clean"]);
+  gulp.watch(htmlSources, ["html"]);
+  gulp.watch(jsonSources, ["json"]);
+
 });
 
 gulp.task("connect", function(){
@@ -71,5 +86,6 @@ gulp.task("connect", function(){
     livereload:true
   });
 });
+
 
 gulp.task("default", ["connect", "watch"]);
