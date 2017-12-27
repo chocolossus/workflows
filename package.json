@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "description": "A project to showcase workflows",
   "main": "index.js",
-  "repository": "?.git",
+  "repository": "https://github.com/chocolossus/workflows.git",
   "author": "Malcolm Thomas-Gustave",
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-coffee": "^3.0.0",
     "gulp-util": "^3.0.8"
   }
 }
