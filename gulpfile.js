@@ -5,8 +5,8 @@ var gulp = require("gulp"),
     compass = require("gulp-compass"),
     minifyCSS = require('gulp-minify-css'),
     clean = require('gulp-clean'),
-    concat = require("gulp-concat"),
-    runSequence = require('run-sequence');
+    connect = require('gulp-connect'),
+    concat = require("gulp-concat");
 
 var coffeeSources = ["components/coffee/tagline.coffee"];
 var jsSources = ["components/scripts/rclick.js",
@@ -14,7 +14,8 @@ var jsSources = ["components/scripts/rclick.js",
                  "components/scripts/tagline.js",
                  "components/scripts/template.js"];
 
-var sassSources = ["components/sass/style.scss"];
+var sassSources = ["components/sass/*.scss"];
+var sassFinal = ["components/sass/style.scss"];
 
 gulp.task("coffee", function(){
   gulp.src(coffeeSources)
@@ -27,7 +28,8 @@ gulp.task("js", function(){
   gulp.src(jsSources)
       .pipe(concat("script.js"))
       .pipe(browserify())
-      .pipe(gulp.dest("builds/development/js"));
+      .pipe(gulp.dest("builds/development/js"))
+      .pipe(connect.reload());
 });
 
 gulp.task('clean', ["compass"], function () {
@@ -36,7 +38,7 @@ gulp.task('clean', ["compass"], function () {
 });
 
 gulp.task("compass", function(done){
-  gulp.src(sassSources)
+  gulp.src(sassFinal)
       .pipe(compass({
         css: "temp",
         sass: "components/sass",
@@ -47,6 +49,7 @@ gulp.task("compass", function(done){
       .on("error", gutil.log)
       //.pipe(minifyCSS())
       .pipe(gulp.dest("builds/development/css"))
+      .pipe(connect.reload())
       .on("end", function() { done(); });
       //the secret sauce here is shoving the done into the end event
       //this forces the system to wait for this to finish
@@ -56,11 +59,17 @@ gulp.task("compass", function(done){
 
 gulp.task("dev", ["clean"]);
 
-/*
-gulp.task('dev', function(done) {
-    runSequence('compass', 'clean', function() {
-        console.log('Run something else');
-        done();
-    });
+gulp.task("watch", ["dev"], function(){
+  gulp.watch(coffeeSources, ["coffee"]);
+  gulp.watch(jsSources, ["js"]);
+  gulp.watch(sassSources, ["clean"]);
 });
-*/
+
+gulp.task("connect", function(){
+  connect.server({
+    root: "builds/development",
+    livereload:true
+  });
+});
+
+gulp.task("default", ["connect", "watch"]);
