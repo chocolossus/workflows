@@ -1,0 +1,9 @@
+{
+  "name": "workflowEx",
+  "version": "0.0.1",
+  "description": "A project to showcase workflows",
+  "main": "index.js",
+  "repository": "?.git",
+  "author": "Malcolm Thomas-Gustave",
+  "license": "MIT"
+}
