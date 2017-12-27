@@ -5,5 +5,9 @@
   "main": "index.js",
   "repository": "?.git",
   "author": "Malcolm Thomas-Gustave",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.8"
+  }
 }
