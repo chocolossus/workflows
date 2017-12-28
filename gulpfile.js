@@ -6,6 +6,8 @@ var gulp = require("gulp"),
     minifyCSS = require('gulp-minify-css'),
     clean = require('gulp-clean'),
     connect = require('gulp-connect'),
+    gulpif = require('gulp-if'),
+    uglify = require('gulp-uglify'),
     concat = require("gulp-concat");
 
 var coffeeSources,
@@ -95,8 +97,9 @@ gulp.task("watch", ["dev"], function(){
   gulp.watch(sassSources, ["clean"]);
   gulp.watch(htmlSources, ["html"]);
   gulp.watch(jsonSources, ["json"]);
-
 });
+
+console.log("test message of some sort");
 
 gulp.task("connect", function(){
   connect.server({
