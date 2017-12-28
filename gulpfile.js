@@ -8,16 +8,34 @@ var gulp = require("gulp"),
     connect = require('gulp-connect'),
     concat = require("gulp-concat");
 
-var coffeeSources = ["components/coffee/tagline.coffee"];
-var jsSources = ["components/scripts/rclick.js",
+var coffeeSources,
+  jsSources,
+  sassSources,
+  sassFinal,
+  htmlSources,
+  jsonSources,
+  outputDir;
+
+env = process.env.NODE_ENV || "development";
+
+if(env==="development"){
+  outputDir = "builds/development";
+  sassStyle = "expanded";
+}else{
+  outputDir = "builds/production";
+  sassStyle = "compressed";
+}
+
+coffeeSources = ["components/coffee/tagline.coffee"];
+jsSources = ["components/scripts/rclick.js",
                  "components/scripts/pixgrid.js",
                  "components/scripts/tagline.js",
                  "components/scripts/template.js"];
 
-var sassSources = ["components/sass/*.scss"];
-var sassFinal = ["components/sass/style.scss"];
-var htmlSources = ["builds/development/*.html"];
-var jsonSources = ["builds/development/js/*.json"];
+sassSources = ["components/sass/*.scss"];
+sassFinal = ["components/sass/style.scss"];
+htmlSources = ["builds/development/*.html"];
+jsonSources = ["builds/development/js/*.json"];
 
 gulp.task("coffee", function(){
   gulp.src(coffeeSources)
@@ -30,7 +48,7 @@ gulp.task("js", function(){
   gulp.src(jsSources)
       .pipe(concat("script.js"))
       .pipe(browserify())
-      .pipe(gulp.dest("builds/development/js"))
+      .pipe(gulp.dest(outputDir+"/js"))
       .pipe(connect.reload());
 });
 
@@ -44,13 +62,13 @@ gulp.task("compass", function(done){
       .pipe(compass({
         css: "temp",
         sass: "components/sass",
-        image: "builds/development/images",
-        style: "expanded",
+        image: outputDir+"/images",
+        style: sassStyle,
         comments: "true",
       }))
       .on("error", gutil.log)
       //.pipe(minifyCSS())
-      .pipe(gulp.dest("builds/development/css"))
+      .pipe(gulp.dest(outputDir+"/css"))
       .pipe(connect.reload())
       .on("end", function() { done(); });
       //the secret sauce here is shoving the done into the end event
@@ -69,7 +87,7 @@ gulp.task("json", function(){
       .pipe(connect.reload());
 });
 
-gulp.task("dev", ["clean"]);
+gulp.task("dev", ["coffee", "js", "html", "json", "clean"]);
 
 gulp.task("watch", ["dev"], function(){
   gulp.watch(coffeeSources, ["coffee"]);
@@ -82,7 +100,7 @@ gulp.task("watch", ["dev"], function(){
 
 gulp.task("connect", function(){
   connect.server({
-    root: "builds/development",
+    root: outputDir,
     livereload:true
   });
 });
